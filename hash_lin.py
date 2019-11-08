@@ -3,7 +3,6 @@ import sys
 class Page:
     keys = []
     index = 0
-    # bitmap = False
     overflow = []
 
     def __init__(self, index):
@@ -15,9 +14,9 @@ class Page:
     def __str__(self):
         out = ""
         if len(self.overflow) == 0:
-            out = "Page " + str(self.index) + ": [" + ",".join(map(str, self.keys)) + "] " # + str(self.bitmap)
+            out = "Page " + str(self.index) + ": [" + ",".join(map(str, self.keys)) + "]"
         else:
-            out = "Page " + str(self.index) + ": [" + ",".join(map(str, self.keys))+ "], Overflow: [" + ",".join(map(str, self.overflow)) + "]" # + str(self.bitmap)
+            out = "Page " + str(self.index) + ": [" + ",".join(map(str, self.keys))+ "], Overflow: [" + ",".join(map(str, self.overflow)) + "]"
         return out
 
 # function that returns the module of the whole division between the value and the d-power of 2
@@ -32,7 +31,6 @@ else:
     max_len = int(sys.argv[1])  # max lenght of the pages
 d = 1                           # initial number of pages
 p = 0                           # starting index of the page to be splitted
-bitmap = []                     # array that stores if the page has already been splitted
 pages = []                      # array that will contain the pages
 
 # initial allocation of d pages
@@ -58,8 +56,9 @@ while True:
         all_keys = pages[p].keys + pages[p].overflow        # defining all the keys to re-map
 
         for key in all_keys:
+            old_hash = hash_fun(key, d)
             new_hash = hash_fun(key, d+1)
-            if new_hash != hash_val:                        # moving keys only if their new hash is different from the original one
+            if new_hash != old_hash:                        # moving keys only if their new hash is different from the old one
                 if key in pages[p].keys:
                     pages[p].keys.remove(key)
                 else:
@@ -68,6 +67,13 @@ while True:
                     pages[new_hash].keys.append(key)
                 else:
                     pages[new_hash].overflow.append(key)
+            else:                                           # if the new hash is the same but it was in the overflow list
+                if key in pages[new_hash].overflow:
+                    if len(pages[new_hash].keys) < max_len:
+                        pages[new_hash].keys.append(key)
+                    else:
+                        pages[new_hash].overflow.append(key)
+                    pages[new_hash].overflow.remove(key)
 
         p = p + 1
         if p == pow(2, d):
