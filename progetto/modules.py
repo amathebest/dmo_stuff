@@ -1,5 +1,6 @@
 # module file for the analysis script
 import pandas as pd
+import matplotlib.pyplot as plt
 
 class Node:
     id = 0
@@ -45,3 +46,8 @@ def compute_gini_impurity():
     g_imp = 0
 
     return g_imp
+
+def output_plots(df, base_path):
+    df["avg_g"].value_counts().sort_index().plot.bar(title = "avg_g")
+    plt.savefig(base_path + "/plots/plot.png")
+    return
