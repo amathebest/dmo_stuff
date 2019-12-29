@@ -37,16 +37,20 @@ def bool_math(row):
 
 # function that returns Gini Index of the considered node in a split
 def compute_gini_index(df):
-    g_idx = 0
+    count = len(df.index)
+    class_0 = len(df[df.math == 0].index)
+    class_1 = len(df[df.math == 1].index)
+    g_idx = 1 - ((class_0/count)**2+(class_1/count)**2)
+    return g_idx, count
 
-    return g_idx
-
-
-def compute_gini_impurity():
+# function that returns the Gini Impurity of a given split
+def compute_gini_impurity(idx, cnts, len_node):
     g_imp = 0
-
+    for i in range(len(idx)):
+        g_imp += idx[i] * (cnts[i]/len_node)
     return g_imp
 
+# function that outputs some plots
 def output_plots(df, base_path):
     df["avg_g"].value_counts().sort_index().plot.bar(title = "avg_g")
     plt.savefig(base_path + "/plots/plot.png")
