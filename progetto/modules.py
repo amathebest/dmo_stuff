@@ -35,6 +35,15 @@ def bool_math(row):
     else:
         return 1
 
+# function that encodes the gender column from being a string to a 0/1:
+# M -> 0
+# F -> 1
+def bool_gender(row):
+    if row["gender"] == "M":
+        return 0
+    else:
+        return 1
+
 # function that returns Gini Index of the considered node in a split
 def compute_gini_index(df):
     count = len(df.index)
@@ -52,6 +61,6 @@ def compute_gini_impurity(idx, cnts, len_node):
 
 # function that outputs some plots
 def output_plots(df, base_path):
-    df["avg_g"].value_counts().sort_index().plot.bar(title = "avg_g")
-    plt.savefig(base_path + "/plots/plot.png")
+    df["total_cfu"].value_counts().sort_index().plot.bar(title = "total_cfu")
+    plt.savefig(base_path + "/plots/total_cfu.png")
     return
