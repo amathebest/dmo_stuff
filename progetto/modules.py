@@ -49,7 +49,7 @@ def compute_gini_index(df):
     count = len(df.index)
     class_0 = len(df[df.math == 0].index)
     class_1 = len(df[df.math == 1].index)
-    g_idx = 1 - ((class_0/count)**2+(class_1/count)**2)
+    g_idx = 1 - ((class_0/max(count, 1))**2+(class_1/max(count, 1))**2)
     return g_idx, count
 
 # function that returns the Gini Impurity of a given split
