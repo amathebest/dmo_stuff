@@ -26,7 +26,6 @@ class Edge:
         self.id_ending_node = id_ending_node
         self.label = label
 
-
 # function that returns 1 whether the row represents a student that passed Analisi Matematica 1
 # in the respective first year of career, 0 otherwise
 def bool_math(row):
@@ -44,11 +43,20 @@ def bool_gender(row):
     else:
         return 1
 
+# function that encodes the degree column from being a string to a 0/1:
+# CdS3 -> 0
+# CdS4 -> 1
+def bool_degree(row):
+    if row["degree"] == "CdS3":
+        return 0
+    else:
+        return 1
+
 # function that returns Gini Index of the considered node in a split
 def compute_gini_index(df):
     count = len(df.index)
-    class_0 = len(df[df.math == 0].index)
-    class_1 = len(df[df.math == 1].index)
+    class_0 = len(df[df.mat_bool == 0].index)
+    class_1 = len(df[df.mat_bool == 1].index)
     g_idx = 1 - ((class_0/max(count, 1))**2+(class_1/max(count, 1))**2)
     return g_idx, count
 
