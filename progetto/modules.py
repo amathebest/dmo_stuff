@@ -52,6 +52,63 @@ def bool_degree(row):
     else:
         return 1
 
+# function that encodes the school string into a numerical value
+def transform_school(row):
+    if row["school"] == "LS":
+        return 0
+    elif row["school"] == "LC":
+        return 1
+    elif row["school"] == "IT":
+        return 2
+    elif row["school"] == "TC":
+        return 3
+    elif row["school"] == "IP":
+        return 4
+    else:
+        return 5
+
+# function that finds the best split for a given node on a numerical attribute
+def compute_numerical_split(df, attribute, tree, edges):
+    sorted_values = sorted(training[attribute].unique())
+    best_gini = sys.maxsize
+    df_node_1 = pd.DataFrame()
+    df_node_2 = pd.DataFrame()
+    best_val = 0
+    g_idx_node_1 = 0
+    g_idx_node_2 = 0
+
+    for value in sorted_values:
+        df_1 = df[df[attribute] <= value]
+        df_2 = df[df[attribute] > value]
+        g_idx_1, count_1 = compute_gini_index(df_1)
+        g_idx_2, count_2 = compute_gini_index(df_2)
+        arr_idx = []
+        arr_idx.append(g_idx_1)
+        arr_idx.append(g_idx_2)
+        arr_cnt = []
+        arr_cnt.append(count_1)
+        arr_cnt.append(count_2)
+        len_node = len(df.index)
+        g_imp_tcfu = compute_gini_impurity(arr_idx, arr_cnt, len_node)
+        if g_imp_tcfu < best_gini:
+            best_val = value
+            best_gini = g_imp_tcfu
+            df_node_1 = df_1
+            df_node_2 = df_2
+            g_idx_node_1 = g_idx_1
+            g_idx_node_2 = g_idx_2
+
+    node_1 = Node(len(tree), "", df_node_1, g_idx_node_1)
+    tree.append(node_1)
+    edge_1 = Edge(len(edges), len(tree), len(tree)-1, "<=" + str(best_val))
+    edges.append(edge_1)
+    node_2 = Node(len(tree), "", df_node_2, g_idx_node_2)
+    tree.append(node_2)
+    edge_2 = Edge(len(edges), 0, len(tree)-1, ">" + str(best_val))
+    edges.append(edge_2)
+
+    return best_gini
+
 # function that returns Gini Index of the considered node in a split
 def compute_gini_index(df):
     count = len(df.index)
