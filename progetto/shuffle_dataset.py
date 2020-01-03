@@ -8,9 +8,9 @@ from pathlib import Path
 # in the respective first year of career, 0 otherwise
 def bool_math(row):
     if row["math_course_g"] == 0:
-        return 0
+        return "no"
     else:
-        return 1
+        return "yes"
 
 # dataset import
 base_path = Path(__file__).absolute().parent
