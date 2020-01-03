@@ -1,4 +1,5 @@
 # module file for the analysis script
+import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -68,8 +69,8 @@ def transform_school(row):
         return 5
 
 # function that finds the best split for a given node on a numerical attribute
-def compute_numerical_split(df, attribute, tree, edges):
-    sorted_values = sorted(training[attribute].unique())
+def compute_numerical_split(df, attribute, tree, edges, starting_node):
+    sorted_values = sorted(df[attribute].unique())
     best_gini = sys.maxsize
     df_node_1 = pd.DataFrame()
     df_node_2 = pd.DataFrame()
@@ -100,14 +101,14 @@ def compute_numerical_split(df, attribute, tree, edges):
 
     node_1 = Node(len(tree), "", df_node_1, g_idx_node_1)
     tree.append(node_1)
-    edge_1 = Edge(len(edges), len(tree), len(tree)-1, "<=" + str(best_val))
+    edge_1 = Edge(len(edges), starting_node, len(tree)-1, attribute + "<=" + str(best_val))
     edges.append(edge_1)
     node_2 = Node(len(tree), "", df_node_2, g_idx_node_2)
     tree.append(node_2)
-    edge_2 = Edge(len(edges), 0, len(tree)-1, ">" + str(best_val))
+    edge_2 = Edge(len(edges), starting_node, len(tree)-1, attribute + ">" + str(best_val))
     edges.append(edge_2)
 
-    return best_gini
+    return best_gini, best_val
 
 # function that returns Gini Index of the considered node in a split
 def compute_gini_index(df):
