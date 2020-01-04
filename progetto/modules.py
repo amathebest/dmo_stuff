@@ -71,7 +71,7 @@ def transform_school(row):
         return 5
 
 # function that finds the best split for a given node on a numerical attribute
-def compute_numerical_split(df, attribute, tree, edges, starting_node, father_imp):
+def compute_numerical_split(df, attribute, tree, edges, starting_node):
     tree[starting_node].classif = ""
 
     sorted_values = sorted(df[attribute].unique())
@@ -115,59 +115,9 @@ def compute_numerical_split(df, attribute, tree, edges, starting_node, father_im
     else:
         classif_2 = "mat_yes"
 
-    if father_imp > best_gini:
-        print("\nSplit on node", starting_node)
-        print("No:", len(df[df.mat_bool == 0].index))
-        print("Yes:", len(df[df.mat_bool == 1].index))
-        
-        node_1 = Node(len(tree), "", df_node_1, g_idx_node_1, classif_1)
-        tree.append(node_1)
-        edge_1 = Edge(len(edges), starting_node, len(tree)-1, attribute + "<=" + str(best_val))
-        edges.append(edge_1)
-        node_2 = Node(len(tree), "", df_node_2, g_idx_node_2, classif_2)
-        tree.append(node_2)
-        edge_2 = Edge(len(edges), starting_node, len(tree)-1, attribute + ">" + str(best_val))
-        edges.append(edge_2)
-
-    return best_gini, best_val
-
-# function that finds the best split for a given node on a categorical attribute
-def compute_bin_categorical_split(df, attribute, tree, edges, starting_node):
     print("\nSplit on node", starting_node)
-    tree[starting_node].classif = ""
-    sorted_values = sorted(df[attribute].unique())
-    best_gini = sys.maxsize
-    df_node_1 = pd.DataFrame()
-    df_node_2 = pd.DataFrame()
-    g_idx_node_1 = 0
-    g_idx_node_2 = 0
-    classif_1 = ""
-    classif_2 = ""
-    df_1 = df[df[attribute] == sorted_values[0]]
-    df_2 = df[df[attribute] == sorted_values[1]]
-
-    g_idx_1, count_1 = compute_gini_index(df_1)
-    g_idx_2, count_2 = compute_gini_index(df_2)
-    arr_idx = []
-    arr_idx.append(g_idx_1)
-    arr_idx.append(g_idx_2)
-    arr_cnt = []
-    arr_cnt.append(count_1)
-    arr_cnt.append(count_2)
-    len_node = len(df.index)
-    g_imp = compute_gini_impurity(arr_idx, arr_cnt, len_node)
-
     print("No:", len(df[df.mat_bool == 0].index))
     print("Yes:", len(df[df.mat_bool == 1].index))
-    # assign the prevalent class to each node
-    if len(df_node_1[df_node_1.mat_bool == 0].index) > len(df_node_1[df_node_1.mat_bool == 1].index):
-        classif_1 = "mat_no"
-    else:
-        classif_1 = "mat_yes"
-    if len(df_node_2[df_node_2.mat_bool == 0].index) > len(df_node_2[df_node_2.mat_bool == 1].index):
-        classif_2 = "mat_no"
-    else:
-        classif_2 = "mat_yes"
 
     node_1 = Node(len(tree), "", df_node_1, g_idx_node_1, classif_1)
     tree.append(node_1)
